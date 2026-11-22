@@ -1,0 +1,26 @@
+---
+import { antarcticExpedition as trip } from '../data/antarctic-expedition';
+const { destination } = Astro.props as { destination: string };
+const stops = [
+  { place: 'Iguazú', country: 'Argentina' },
+  { place: 'Buenos Aires', country: 'Argentina' },
+  { place: 'Ushuaia', country: 'Argentina' },
+  { place: 'Antarctica', country: 'The expedition' },
+  { place: 'Buenos Aires', country: 'Return to Argentina' },
+  { place: 'Santiago', country: 'Chile' },
+  { place: 'Valparaíso', country: 'Chile' },
+  { place: 'Atacama', country: 'Chile' },
+];
+---
+<section class="journey-route" aria-labelledby="journey-route-heading">
+  <p class="eyebrow">Antarctic expedition + South American extensions · 22+ days</p>
+  <h2 id="journey-route-heading">Antarctica, with <em>Argentina &amp; Chile.</em></h2>
+  {destination === 'argentina' ? <p>Argentina was an extension around my Antarctic expedition: Iguazú, Buenos Aires and Ushuaia before the cruise, then a return to Buenos Aires afterwards.</p> : destination === 'chile' ? <p>Chile was my extension after the Antarctic cruise and a return to Buenos Aires: Santiago, Valparaíso and then Atacama.</p> : <p>The Antarctic cruise was the centrepiece of this trip. I added extensions in Argentina before and after the expedition, followed by Chile: Santiago, Valparaíso and Atacama.</p>}
+  <p>I booked <em>{trip.name}</em> aboard <em>{trip.ship}</em> through {trip.bookingCompany}, in partnership with {trip.expeditionPartner}. The booked package ran from {trip.dateLabel}. My account describes a ten-day Antarctic voyage crossing the Circle; the full journey, including my Argentina and Chile extensions, lasted more than 22 days.</p>
+  <ol class="journey-stops">{stops.map((stop, index) => <li><span class="eyebrow">{String(index + 1).padStart(2, '0')}</span><strong>{stop.place}</strong><span>{stop.country}</span></li>)}</ol>
+  <nav class="journey-destinations" aria-label="Destinations on this journey">
+    <a href="/destinations/argentina/" aria-current={destination === 'argentina' ? 'page' : undefined}>Explore Argentina →</a>
+    <a href="/destinations/antarctica/" aria-current={destination === 'antarctica' ? 'page' : undefined}>Explore Antarctica →</a>
+    <a href="/destinations/chile/" aria-current={destination === 'chile' ? 'page' : undefined}>Explore Chile →</a>
+  </nav>
+</section>

@@ -1,0 +1,26 @@
+---
+import type { CollectionEntry } from 'astro:content';
+const { entries, current = '', hub = false } = Astro.props as { entries: CollectionEntry<'entries'>[]; current?: string; hub?: boolean };
+const order = ['eight-days-in-cuba', 'todo-bien-en-habana', 'portfolio/almendrones', 'portfolio/cuban-sports'];
+const collection = order.map(slug => entries.find(e => e.data.slug === slug)).filter((e): e is CollectionEntry<'entries'> => !!e);
+---
+<nav class:list={['cuba-connections', { 'cuba-hub-intro': hub }]} aria-label="Cuba stories and photo essays">
+  {hub ? <><h2>One journey. Four perspectives.</h2><p>Explore my 2015 journey through Cuba, the friendship behind a Havana story, and two collections of photographs.</p></> : <p class="eyebrow">The Cuba collection</p>}
+  <ul>{collection.map(e => <li>
+    <span class="cuba-format">{e.data.kind === 'project' ? 'Photo essay' : 'Journal'}{e.data.status === 'draft' && ' · Working draft'}</span>
+    {e.data.slug === current ? <span class="cuba-current" aria-current="page">{e.data.title}</span> : <a href={`/${e.data.slug}/`}>{e.data.title} <span aria-hidden="true">↗</span></a>}
+  </li>)}</ul>
+  {!hub && <a class="cuba-all" href="/destinations/cuba/">Explore all of Cuba ↗</a>}
+</nav>
+<style>
+.cuba-connections{margin-block:48px;padding-block:28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cuba-connections h2{font-size:clamp(28px,4vw,42px);margin-bottom:18px}
+.cuba-connections>p:not(.eyebrow){max-width:680px;color:var(--muted)}
+.cuba-connections ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 32px;list-style:none;padding:0;margin:24px 0}
+.cuba-connections li{margin:0;padding:0;line-height:1.5}
+.cuba-format{display:block;font:10px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.cuba-connections a,.cuba-current{font-size:16px}.cuba-current{color:var(--muted)}
+.cuba-connections a{text-decoration:underline;text-underline-offset:5px}.cuba-all{font:12px var(--sans)}
+.cuba-hub-intro{margin-top:0;margin-bottom:48px}
+@media(max-width:600px){.cuba-connections ul{grid-template-columns:1fr;gap:20px}}
+</style>

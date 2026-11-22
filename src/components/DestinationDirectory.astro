@@ -1,0 +1,18 @@
+---
+import { getCollection } from 'astro:content';
+import { destinations } from '../data/catalog';
+const entries = await getCollection('entries');
+const hasStories = (slug: string) => entries.some(entry => entry.data.destination === slug && entry.data.status !== 'pending');
+const groups = [
+  { id: 'africa', title: 'Africa', regions: ['East Africa', 'West Africa', 'North Africa', 'Southern Africa'] },
+  { id: 'asia', title: 'Asia & the Middle East', regions: ['South Asia', 'Southeast Asia', 'East Asia', 'Middle East'] },
+  { id: 'europe', title: 'Europe', regions: ['Northern Europe', 'Southern Europe', 'Western Europe'] },
+  { id: 'americas', title: 'Americas & Caribbean', regions: ['South America', 'North America', 'Caribbean'] },
+  { id: 'oceania', title: 'Oceania', regions: ['Oceania'] },
+  { id: 'antarctica', title: 'Antarctica', regions: ['The seventh continent'] },
+].sort((a, b) => a.title.localeCompare(b.title, 'en'));
+const alphabetical = [...destinations].sort((a, b) => a.name.localeCompare(b.name, 'en'));
+const ordered = groups.flatMap(group => alphabetical.filter(destination => group.regions.includes(destination.region)));
+---
+<nav class="collection-switch" aria-label="Browse destinations by region">{groups.map(group => <a href={`#${group.id}`}>{group.title}</a>)}</nav>
+{groups.map(group => <section class="destination-region" aria-labelledby={`${group.id}-heading`} id={group.id}><div class="section-heading"><h2 id={`${group.id}-heading`}>{group.title}</h2></div><div class="destination-grid">{alphabetical.filter(destination => group.regions.includes(destination.region)).map(destination => <a class:list={['destination-tile', destination.tone]} href={`/destinations/${destination.slug}/`}><div class="tile-top"><span>{destination.region}</span><span>{String(ordered.indexOf(destination) + 1).padStart(2, '0')}</span></div><span class="destination-name">{destination.name}</span><span class="destination-stage">{hasStories(destination.slug) ? 'Stories & photography' : 'Journey overview'}</span><div class="tile-bottom"><span>{destination.coordinates}</span><span class="tile-arrow" aria-hidden="true">↗</span></div></a>)}</div></section>)}

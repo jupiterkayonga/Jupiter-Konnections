@@ -1,0 +1,25 @@
+---
+import { socials } from '../data/catalog';
+interface Props { compact?: boolean; primaryOnly?: boolean; label?: string; }
+const { compact = false, primaryOnly = false, label = 'Social profiles' } = Astro.props;
+const links = primaryOnly ? socials.filter(s => s.id === 'instagram') : socials;
+const paths: Record<string,string> = {
+  twitter: 'M4 3h4l12 18h-4L4 3Zm16 0L4 21',
+  instagram: 'M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm10 5h.01M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
+  facebook: 'M14 22v-9h3l.5-4H14V7c0-1.2.4-2 2-2h2V2h-3c-3 0-5 1.9-5 5v2H7v4h3v9',
+  pinterest: 'M9 21l3-12m-1.2 8c-1.6-1.5-2-3-1.5-5.4.4-2 1.6-3.2 3-3.2 1.2 0 1.8.8 1.4 2.6l-.9 3.5c-.4 1.5.4 2.5 1.7 2.5 2.7 0 4.5-3.5 4.5-6.2 0-3.4-2.6-5.8-6.1-5.8C9 5 6 7.7 6 11c0 1.5.4 2.7 1.3 3.5',
+  youtube: 'M9 8l7 4-7 4V8ZM3 5.5c4-1 14-1 18 0 1.3 3 1.3 10 0 13-4 1-14 1-18 0-1.3-3-1.3-10 0-13Z',
+  tiktok: 'M14 3v12a5 5 0 1 1-5-5v3a2 2 0 1 0 2 2V3h3Zm0 0c0 4 3 6 6 6V6c-2 0-3-1-3-3h-3Z',
+};
+---
+<nav class:list={['social-links', { 'social-links-compact': compact }]} aria-label={label}>
+  {links.map(s => {
+    const ready = Boolean(s.url.trim());
+    const Tag = ready ? 'a' : 'span';
+    const description = ready ? `${s.name} — opens in a new tab` : `${s.name} — profile link pending`;
+    return <Tag href={ready ? s.url : undefined} class:list={['social-button', { 'social-pending': !ready }]} target={ready ? '_blank' : undefined} rel={ready ? 'noopener noreferrer' : undefined} role={ready ? undefined : 'link'} aria-disabled={ready ? undefined : 'true'} aria-label={description} title={description}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={paths[s.id]} /></svg>
+      <span class:list={{ 'sr-only': compact }}>{s.name}</span>{!compact && <span class="social-arrow" aria-hidden="true">{ready ? '↗' : '·'}</span>}
+    </Tag>;
+  })}
+</nav>

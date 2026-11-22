@@ -1,0 +1,25 @@
+---
+import { destinations } from '../data/catalog';
+import { countryJourneys } from '../data/destination-journeys';
+const { destination } = Astro.props as { destination: string };
+const journey = countryJourneys[destination];
+const region = destinations.find(country => country.slug === destination)?.region || 'Travel';
+const countries = destinations.filter(country => country.region === region && country.slug !== destination).sort((a, b) => a.name.localeCompare(b.name, 'en'));
+const additionalVisits = [...(journey.secondVisit ? [journey.secondVisit] : []), ...(journey.moreVisits || [])];
+const StopsTag = journey.repeatedVisits ? 'ul' : 'ol';
+---
+<section class="journey-route" aria-labelledby="country-journey-heading">
+  <p class="eyebrow">{region} · {journey.duration}</p>
+  <h2 id="country-journey-heading">{journey.title}</h2>
+  <p>{journey.introduction}</p>
+  <StopsTag class="journey-stops">{journey.stops.map((stop, index) => <li><span class="eyebrow">{String(index + 1).padStart(2, '0')}</span><strong>{stop.place}</strong><span>{stop.detail}</span></li>)}</StopsTag>
+  {additionalVisits.map((visit, visitIndex) => {
+    const VisitStops = 'unordered' in visit && visit.unordered ? 'ul' : 'ol';
+    return <section aria-labelledby={`additional-visit-${visitIndex}-heading`}>{'planned' in visit && visit.planned && <p class="eyebrow">Upcoming journey</p>}<h3 id={`additional-visit-${visitIndex}-heading`}>{visit.title}</h3>{'duration' in visit && visit.duration && <p class="eyebrow">{visit.duration}</p>}<p>{visit.introduction}</p><VisitStops class="journey-stops">{visit.stops.map((stop, index) => <li><span class="eyebrow">{String(index + 1).padStart(2, '0')}</span><strong>{stop.place}</strong><span>{stop.detail}</span></li>)}</VisitStops></section>;
+  })}
+
+
+  {journey.relatedLandmark && <aside class="article-related"><p class="eyebrow">Related reading</p><p>Explore {journey.relatedLandmark} in my <a href="/the-wonders-of-the-world-a-journey-of-wonder-and-discovery/">Wonders of the World story</a>.</p></aside>}
+  {destination === 'rwanda' && <aside class="article-related"><p class="eyebrow">More personal stories</p><p>Read about my childhood dream in <a href="/from-rwanda-to-antarctica/">From Rwanda to Antarctica</a>, or explore memories and reflection in <a href="/quarantine-diaries/">Quarantine Diaries</a>.</p></aside>}
+  <nav class="journey-destinations" aria-label="Explore more destinations"><a href="/destinations/">All destinations →</a>{countries.filter(country => country.slug !== destination).map(country => <a href={`/destinations/${country.slug}/`}>Explore {country.name} →</a>)}</nav>
+</section>

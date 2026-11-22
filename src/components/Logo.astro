@@ -1,0 +1,14 @@
+---
+interface Props { footer?: boolean; }
+const { footer = false } = Astro.props;
+---
+<a href="/" class:list={['brand', 'brand-refined', { 'brand-footer': footer }]} aria-label="Jupiter Konnections home">
+  <svg class="logo-symbol" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+    <circle class="logo-orbit" cx="30" cy="33" r="26" />
+    <path class="logo-bearing" d="M4 33h5m42 0h5M30 7v5m0 42v5" />
+    <path class="logo-initials" d="M24 24v17c0 5-3 8-7 8s-7-3-7-7m25-22v27m13-23L35 36l14 12" />
+    <circle class="logo-j-dot" cx="24" cy="17" r="2" />
+    <path class="logo-compass" d="m49 1 2.5 7.5L59 11l-7.5 2.5L49 21l-2.5-7.5L39 11l7.5-2.5Z" />
+  </svg>
+  <span class="logo-wordmark"><span>JUPITER</span><span>KONNECTIONS</span><span class="logo-tagline">Places · People · Perspective</span></span>
+</a>

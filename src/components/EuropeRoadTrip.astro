@@ -1,0 +1,9 @@
+---
+const stops = ['Berlin', 'Halle', 'Bonn', 'Wiesbaden', 'Oberwesel', 'Bingen', 'Kehl', 'Strasbourg', 'Reims', 'Paris'];
+---
+<section class="journey-route" aria-labelledby="europe-roadtrip-heading">
+  <p class="eyebrow">Germany → France · Road trip</p>
+  <h2 id="europe-roadtrip-heading">From Berlin to Paris, <em>by road.</em></h2>
+  <ol class="journey-stops">{stops.map((place, index) => <li><span class="eyebrow">{String(index + 1).padStart(2, '0')}</span><strong>{place}</strong><span>{index < 7 ? 'Germany' : 'France'}</span></li>)}</ol>
+  <nav class="journey-destinations" aria-label="Countries on the road trip"><a href="/destinations/germany/">Explore Germany →</a><a href="/destinations/france/">Explore France →</a></nav>
+</section>

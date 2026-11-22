@@ -1,0 +1,43 @@
+---
+import '../styles/global.css';
+import { nav, email } from '../data/catalog';
+import Logo from '../components/Logo.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import AnalyticsConsent from '../components/AnalyticsConsent.astro';
+interface Props { title?: string; description?: string; noindex?: boolean; type?: 'website' | 'article'; }
+const { title = 'Places, people & the stories between', description = 'Travel stories, practical guides, and photography by Jupiter Konnections. Explore Tanzania, India, Cuba, and the connections made along the way.', noindex = false, type = 'website' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const active = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title} | Jupiter Konnections</title><meta name="description" content={description} />
+  <link rel="canonical" href={canonical} /><meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
+  <meta property="og:title" content={`${title} | Jupiter Konnections`} /><meta property="og:description" content={description} />
+  <meta property="og:type" content={type} /><meta property="og:url" content={canonical} /><meta property="og:site_name" content="Jupiter Konnections" />
+  <meta name="twitter:card" content="summary" /><meta name="theme-color" content="#f3f0e8" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="alternate" type="application/rss+xml" title="Jupiter Konnections journal" href="/rss.xml" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header wrap">
+    <Logo />
+    <nav class="desktop-nav" aria-label="Main navigation">{nav.map(n => <a href={n.href} aria-current={active.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>)}</nav>
+    <div class="header-actions"><SocialLinks compact primaryOnly label="Follow Jupiter" /><a class="header-contact" href="/work-with-me/">Let’s connect <span aria-hidden="true">↗</span></a></div>
+    <details class="mobile-menu"><summary>Menu <span aria-hidden="true">+</span></summary><nav aria-label="Mobile navigation">{nav.map(n => <a href={n.href}>{n.label}</a>)}<a href="/work-with-me/">Let’s connect</a><SocialLinks compact label="Follow Jupiter on social media" /></nav></details>
+  </header>
+  <main id="main"><slot /></main>
+  <section class="connect-strip wrap"><p class="eyebrow">Good stories start with a connection</p><a href="/contact/">Let’s make one.<span aria-hidden="true">↗</span></a></section>
+  <footer class="site-footer wrap">
+    <div><Logo footer /><p>A storyteller and explorer at heart.<br />Based in Paris. Connected to the world.</p></div>
+    <div><p class="eyebrow">Explore</p><a href="/travel-guides/">Travel guides</a><a href="/journal/">Journal</a><a href="/portfolio/">Photography</a></div>
+    <div><p class="eyebrow">Connect</p><a href={`mailto:${email}`}>{email}</a><a href="/contact/">Contact</a></div>
+    <div class="footer-social" id="socials"><p class="eyebrow">Follow the journey</p><SocialLinks /></div>
+    <div class="footer-bottom"><span>© {new Date().getFullYear()} Jupiter Konnections</span><div><a href="/privacy-policy/">Privacy</a><a href="/terms-and-conditions/">Terms</a><a href="/rss.xml">RSS</a><button type="button" class="analytics-settings" data-analytics-settings hidden>Analytics settings</button></div><span>Places. People. Perspective.</span></div>
+  </footer>
+  <AnalyticsConsent excluded={noindex} />
+</body>
+</html>

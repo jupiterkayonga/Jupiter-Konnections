@@ -1,0 +1,18 @@
+<dialog class="photo-viewer" data-photo-viewer aria-label="Article photographs" aria-describedby="photo-viewer-caption">
+  <div class="photo-viewer-toolbar">
+    <span class="photo-viewer-counter" data-photo-counter aria-live="polite" aria-atomic="true"></span>
+    <button type="button" class="photo-viewer-control" data-photo-close aria-label="Close photo viewer" autofocus><span aria-hidden="true">×</span></button>
+  </div>
+  <div class="photo-viewer-stage" data-photo-stage aria-busy="false">
+    <p class="photo-viewer-status" data-photo-status role="status" hidden></p>
+  </div>
+  <div class="photo-viewer-footer">
+    <button type="button" class="photo-viewer-control" data-photo-prev aria-label="Previous photograph"><span aria-hidden="true">←</span></button>
+    <p id="photo-viewer-caption" class="photo-viewer-caption" data-photo-caption></p>
+    <button type="button" class="photo-viewer-control" data-photo-next aria-label="Next photograph"><span aria-hidden="true">→</span></button>
+  </div>
+</dialog>
+<script>
+  import { setupPhotoViewer } from '../scripts/photo-viewer';
+  document.querySelectorAll<HTMLElement>('[data-photo-article]').forEach(setupPhotoViewer);
+</script>

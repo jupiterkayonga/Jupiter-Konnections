@@ -1,0 +1,24 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+const assets = import.meta.glob<{ default: ImageMetadata }>('../assets/images/*.{jpg,jpeg,png,webp,avif}', { eager: true });
+interface Props { title: string; destination?: string; image?: string; alt?: string; class?: string; preserveAspect?: boolean; priority?: boolean; }
+const { title, destination = '', image, alt = '', class: className = '', preserveAspect = false, priority = false } = Astro.props;
+const localImage = image ? assets[image.replace(/^\/src/, '..')]?.default : undefined;
+if (image?.startsWith('/src/assets/') && !localImage) throw new Error(`Image not found: ${image}`);
+const tones: Record<string, string> = { tanzania: 'sand', india: 'rose', cuba: 'sage', elsewhere: 'blue', iceland: 'blue', antarctica: 'blue' };
+---
+<div class:list={['media', tones[destination] || 'sand', className, { 'media-natural': preserveAspect && image }]}>
+  {localImage ? <Image src={localImage} alt={alt} format="webp" quality={85}
+    width={preserveAspect ? 2000 : 1200}
+    widths={preserveAspect ? [480, 768, 1200, 1600, 2000] : [480, 768, 1200]}
+    sizes={preserveAspect ? '(min-width: 1112px) 1000px, (min-width: 761px) calc(100vw - 64px), calc(100vw - 40px)' : '(min-width: 1392px) 411px, (min-width: 761px) calc((100vw - 160px) / 3), calc(100vw - 40px)'}
+    loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} decoding="async" /> : image ? <img src={image} alt={alt} loading={priority ? 'eager' : 'lazy'} decoding="async" /> : <>
+    <svg class="media-lines" viewBox="0 0 600 400" fill="none" aria-hidden="true">
+      <circle cx="300" cy="200" r="138" /><ellipse cx="300" cy="200" rx="66" ry="138" />
+      <ellipse cx="300" cy="200" rx="138" ry="52" /><path d="M162 200h276M300 62v276M30 330C160 200 250 410 570 140" />
+      <circle cx="417" cy="150" r="5" class="location-dot" />
+    </svg>
+    <span class="media-caption">{title}</span><span class="media-note">Photograph to follow</span>
+  </>}
+</div>

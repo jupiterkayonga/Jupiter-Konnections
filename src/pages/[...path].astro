@@ -1,0 +1,116 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Media from '../components/Media.astro';
+import Listing from '../components/Listing.astro';
+import PhotoViewer from '../components/PhotoViewer.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import StoryCard from '../components/StoryCard.astro';
+import SouthAmericaJourney from '../components/SouthAmericaJourney.astro';
+import CountryJourney from '../components/CountryJourney.astro';
+import EuropeRoadTrip from '../components/EuropeRoadTrip.astro';
+import DestinationDirectory from '../components/DestinationDirectory.astro';
+import CubaConnections from '../components/CubaConnections.astro';
+import AntarcticExpedition from '../components/AntarcticExpedition.astro';
+import { countryJourneys } from '../data/destination-journeys';
+import { destinations, email, indiaArticleSlugs } from '../data/catalog';
+import legacy from '../data/legacy-routes.json';
+import { relatedArticles, companionArticles } from '../data/article-connections';
+import about from '../data/about.html?raw';
+export async function getStaticPaths() {
+  const allEntries = await getCollection('entries');
+  const added = ['destinations', ...destinations.map(d => `destinations/${d.slug}`), 'travel-guides','work-with-me'];
+  const paths = [...new Set([...legacy.filter(p => p !== '/' && p !== '/portfolio/kumbh-mela-2019/' && p !== '/a-leap-of-faith/' && p !== '/cuban-passion/').map(p => p.replace(/^\/|\/$/g, '')), ...added, ...allEntries.map(e => e.data.slug)])];
+  return paths.map(path => ({ params: { path } }));
+}
+const path = Astro.params.path || '';
+const entries = await getCollection('entries');
+const entry = entries.find(e => e.data.slug === path);
+const isPhotoEssay = entry?.data.kind === 'project';
+const isIndiaArticle = !!entry && indiaArticleSlugs.includes(entry.data.slug);
+const isTanzaniaArticle = entry?.data.destination === 'tanzania';
+const connectedEntries = (slugs: string[]) => slugs.map(slug => {
+  const match = entries.find(e => e.data.slug === slug);
+  if (!match) throw new Error(`Unknown connected article: ${slug}`);
+  return match;
+});
+const related = entry ? connectedEntries(relatedArticles[entry.data.slug] || []) : [];
+const companions = entry ? connectedEntries(companionArticles[entry.data.slug] || []) : [];
+const entryDestination = entry ? destinations.find(d => d.slug === entry.data.destination) : undefined;
+const rendered = entry ? await render(entry) : null;
+const Content = rendered?.Content;
+const destination = destinations.find(d => path === `destinations/${d.slug}`);
+const isListing = ['journal','travel-guides','portfolio','category/featured','category/itineraries','category/stories','project-type/travel'].includes(path) || !!destination;
+const category = path.split('/')[1];
+const filtered = entries.filter(e => {
+  if (destination?.slug === 'india') return indiaArticleSlugs.includes(e.data.slug);
+  if (destination) return e.data.destination === destination.slug;
+  if (path === 'portfolio' || path === 'project-type/travel') return e.data.kind === 'project' || e.data.photoEssay;
+  if (path === 'travel-guides' || category === 'itineraries') return e.data.kind === 'guide';
+  if (category === 'featured') return e.data.featured && e.data.kind !== 'project';
+  if (category === 'stories') return e.data.kind === 'story';
+  return e.data.kind !== 'project';
+});
+const destinationStories = destination ? filtered.filter(e => e.data.kind !== 'project') : [];
+const destinationEssays = destination ? entries.filter(e => e.data.destination === destination.slug && e.data.kind === 'project') : [];
+const isSouthAmericaJourney = !!destination && ['argentina', 'chile', 'antarctica'].includes(destination.slug);
+const antarcticaStories = entries.filter(e => ['travel-to-antarctica', 'from-rwanda-to-antarctica'].includes(e.data.slug));
+const titles: Record<string,string> = {
+  journal: 'The journal.', 'travel-guides': 'For the journey ahead.', portfolio: 'A different perspective.',
+  'category/featured': 'Selected stories.', 'category/itineraries': 'Itineraries & travel guides.', 'category/stories': 'Stories from the road.',
+  'project-type/travel': 'Travel through the lens.', destinations: 'A world of connections.',
+  about: 'Everyone has a story.', contact: 'Good stories start here.', 'work-with-me': 'Let’s create a connection.',
+  'content-creation': 'Stories made together.', 'link-in-bio': 'Follow your curiosity.',
+  'privacy-policy': 'Privacy policy', 'terms-and-conditions': 'Terms & conditions',
+};
+const descriptions: Record<string,string> = {
+  journal: 'Personal stories, travel guides, and encounters from the road. Take your time. There’s a world to explore.',
+  'travel-guides': 'Practical notes and firsthand experiences to help you find your own way.',
+  portfolio: 'Photo essays from the road: short introductions, generous galleries, and a closer look at people, places and traditions.',
+  destinations: 'Explore travel stories, routes and photography across Africa, Asia, the Caribbean, Europe, South America and Antarctica.',
+  about: 'I’m Jupiter. A photographer, storyteller, and explorer based in Paris. My journey began in Rwanda, with a camera and a curiosity about the world.',
+  contact: 'An idea, a question, or a story to share? I’d love to hear from you.',
+  'work-with-me': 'Photography and storytelling rooted in places, people, and real encounters.',
+  'content-creation': 'Let’s talk about the people and places behind your next story.',
+  'link-in-bio': 'Travel stories, photography, and the next connection.',
+};
+const isPolicy = ['privacy-policy','terms-and-conditions'].includes(path);
+const title = entry?.data.title || (destination?.slug === 'india' ? 'India travel stories, festivals and photography' : destination?.name) || titles[path] || 'From the archive';
+const description = entry?.data.description || destination?.description || descriptions[path] || 'Stories and photography from the Jupiter Konnections archive.';
+const noindex = isPolicy || ['pending', 'draft'].includes(entry?.data.status || '');
+const eyebrow = entry ? `${entry.data.kind === 'project' ? 'Photography' : entry.data.kind === 'guide' ? 'Travel guide' : entry.data.photoEssay ? 'Journal · Photo essay' : 'Journal'} / ${entry.data.destination}` : destination ? destination.region : path === 'about' ? 'A little more about me' : path === 'portfolio' ? 'Photography / Photo essays' : path === 'contact' ? 'Let’s connect' : 'Jupiter Konnections / Explore';
+const breadcrumbItems = entry ? [
+  { name: 'Home', path: '/' },
+  { name: isPhotoEssay ? 'Photography' : 'Journal', path: isPhotoEssay ? '/portfolio/' : '/journal/' },
+  ...(entryDestination ? [{ name: entryDestination.name, path: `/destinations/${entryDestination.slug}/` }] : []),
+  { name: title, path: `/${entry.data.slug}/` },
+] : destination ? [{ name: 'Home', path: '/' }, { name: 'Destinations', path: '/destinations/' }, { name: destination.name, path: `/destinations/${destination.slug}/` }] : [];
+---
+<Base title={title} description={description} noindex={noindex} type={entry ? 'article' : 'website'}>
+  {breadcrumbItems.length > 0 && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumbItems.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, item: new URL(item.path, Astro.site).href })) }).replace(/</g, '\\u003c')} />}
+
+
+  {entry ? <div class:list={["wrap", { "photo-essay": isPhotoEssay, "car-collection": entry.data.slug === "portfolio/almendrones", "sports-collection": entry.data.slug === "portfolio/cuban-sports" }]} data-photo-article>
+    <header class="entry-heading"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href={entry.data.kind === 'project' ? '/portfolio/' : '/journal/'}>{entry.data.kind === 'project' ? 'Photography' : 'Journal'}</a>{entryDestination && <><span aria-hidden="true">/</span><a href={`/destinations/${entryDestination.slug}/`}>{entryDestination.name}</a></>}</nav><p class="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{description}</p><div class="entry-meta"><span>By Jupiter Konnections</span>{entry.data.date && <time datetime={entry.data.date}>{new Date(entry.data.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</time>}{entry.data.status === 'draft' ? <span>Working draft</span> : entry.data.status !== 'published' && <span>From the original archive</span>}</div></header>
+    <div class="entry-cover"><Media title={entry.data.destination} destination={entry.data.destination} image={entry.data.image} alt={entry.data.imageAlt} preserveAspect priority /></div>
+    <div class:list={["entry-layout", { "photo-essay-layout": isPhotoEssay }]}>{!isPhotoEssay && <aside class="entry-aside"><p class="eyebrow">Follow the connection</p>{destinations.find(d => d.slug === entry.data.destination) && <a href={`/destinations/${entry.data.destination}/`}>More from {destinations.find(d => d.slug === entry.data.destination)?.name} ↗</a>}<a href="/journal/">Back to the journal ↗</a><a href="/portfolio/">Photography ↗</a></aside>}<div class="prose">
+      {entry.data.status === 'draft' ? <div class="archive-note"><p>This article is a working draft. The route and trip details are being checked against my photographs and memories.</p></div> : entry.data.status === 'recovered' ? <div class="archive-note"><p>This {isPhotoEssay ? 'photo essay' : 'story'} has been restored from {entry.data.source?.includes('quarkexpeditions.com') ? 'its original publication on Quark Expeditions' : 'the original website'}. {!isPhotoEssay && ' Travel details reflect its original publication.'}{!entry.data.image && ' Photographs will be added later.'}</p></div> : entry.data.status === 'pending' ? <div class="archive-note"><p>The full text of this page is still being restored. <a href={entry.data.source} target="_blank" rel="noopener noreferrer">View the archived version ↗</a></p></div> : null}
+      {['travel-to-antarctica', 'from-rwanda-to-antarctica'].includes(entry.data.slug) && <AntarcticExpedition />}
+      {Content && <Content />}
+      {entry.data.destination === 'cuba' && <CubaConnections entries={entries} current={entry.data.slug} />}
+      {companions.length > 0 && <nav class="companion-stories" aria-label={isPhotoEssay ? 'Read the connected stories' : 'Explore the connected photo essays'}><p class="eyebrow">{isPhotoEssay ? 'The stories behind the photographs' : 'Through the lens'}</p><ul>{companions.map(story => <li><a href={`/${story.data.slug}/`}>{story.data.title} <span aria-hidden="true">→</span></a></li>)}</ul></nav>}
+      <p><a href={`/destinations/${entry.data.destination === 'elsewhere' ? '' : entry.data.destination + '/'}`}>Continue exploring →</a></p>
+    </div></div>
+    {related.length > 0 && <section class="section related-stories" aria-labelledby="related-stories-heading"><div class="section-heading"><div><p class="eyebrow">Keep exploring</p><h2 id="related-stories-heading">{isTanzaniaArticle ? <>More from <em>Tanzania.</em></> : isIndiaArticle ? <>More from <em>India.</em></> : isPhotoEssay ? <>More <em>photo essays.</em></> : <>Continue <em>reading.</em></>}</h2></div><a href={isTanzaniaArticle ? "/destinations/tanzania/" : isIndiaArticle ? "/destinations/india/" : isPhotoEssay ? "/portfolio/" : "/journal/"} class="text-link">{isTanzaniaArticle ? "Explore Tanzania ↗" : isIndiaArticle ? "Explore India ↗" : isPhotoEssay ? "All photography ↗" : "All stories ↗"}</a></div><div class="card-grid">{related.map(story => <StoryCard entry={story} />)}</div></section>}
+    <PhotoViewer />
+  </div> : <div class="wrap">
+    <header class="page-heading"><p class="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{description}</p></header>
+    {isListing && <div class="page-body">{destination?.slug === 'cuba' && <CubaConnections entries={entries} hub />}{isSouthAmericaJourney && <SouthAmericaJourney destination={destination!.slug} />}{destination && countryJourneys[destination.slug] && <CountryJourney destination={destination.slug} />}{destination && ['germany', 'france'].includes(destination.slug) && <EuropeRoadTrip />}{destination?.slug === 'india' && <section class="india-intro" aria-labelledby="india-intro-heading"><h2 id="india-intro-heading">From Rajasthan’s cities to its celebrations.</h2><p>Start with my <a href="/rajasthan-travel/">journey through Rajasthan</a> and <a href="/10-things-to-do-in-jaipur/">10 things to do in Jaipur</a> for places to explore. Then follow the people and traditions in <a href="/festivals-from-india-my-journey-in-traditions-and-celebrations/">Festivals from India</a> and my <a href="/kumbh-mela/">Kumbh Mela journal and photo essay</a>.</p><p>My first visit to India was a six-day Golden Triangle road trip in March 2016. I later returned to live in India. On subsequent journeys I spent around a week visiting Varanasi and Kumbh Mela together, and around a week in Darjeeling, followed by another visit to Agra.</p><p>During my time in India, I also travelled to <a href="/destinations/nepal/">Nepal for six days</a> and spent <a href="/destinations/sri-lanka/">a week in southern Sri Lanka</a>.</p></section>}{destination ? <>{destinationStories.length > 0 && <section aria-labelledby="destination-stories-heading"><div class="section-heading"><h2 id="destination-stories-heading">Stories &amp; guides</h2></div><Listing entries={destinationStories} filters={false} /></section>}{destinationStories.length === 0 && isSouthAmericaJourney && <section class="section" aria-labelledby="expedition-stories-heading"><div class="section-heading"><h2 id="expedition-stories-heading">The Antarctic chapter</h2></div><p>Follow the expedition that connects this journey through Argentina and Chile.</p><div class="card-grid two">{antarcticaStories.map(story => <StoryCard entry={story} />)}</div></section>}{destinationEssays.length > 0 && <section class="destination-photo-essays" aria-labelledby="destination-essays-heading"><div class="section-heading"><div><p class="eyebrow">Through the lens</p><h2 id="destination-essays-heading">Photo essays</h2></div><a href="/portfolio/" class="text-link">All photography ↗</a></div><Listing entries={destinationEssays} filters={false} /></section>}</> : <><nav class="collection-switch" aria-label="Explore writing and photography"><a href="/journal/" aria-current={path === 'journal' ? 'page' : undefined}>Journal &amp; guides</a><a href="/portfolio/" aria-current={path === 'portfolio' ? 'page' : undefined}>Photo essays</a></nav><Listing entries={filtered} /></>}</div>}
+    {path === 'destinations' && <div class="page-body"><DestinationDirectory /><div class="section-heading" style="margin-top:55px"><h2>One place. Many stories.</h2></div><p style="max-width:650px;color:var(--muted)">Each destination brings together its travel guides, journal entries, and photography. Follow a destination to discover its stories, photography and connections to the next chapter of the journey.</p></div>}
+    {path === 'about' && <div class="simple-layout"><Media title="Jupiter / Paris" /><div class="prose" set:html={about} /></div>}
+    {path === 'contact' && <div class="contact-content"><p class="eyebrow">Email is the best place to start</p><a class="contact-email" href={`mailto:${email}`}>{email} ↗</a><p>For collaborations, tell me a little about your project, the place you have in mind, and your timing. For everything else, a simple hello is always welcome.</p><div class="contact-links"><a class="text-link" href={`mailto:${email}?subject=Hello%20Jupiter`}>Write to Jupiter ↗</a></div><div class="contact-social"><p class="eyebrow">Or follow the journey</p><SocialLinks /></div></div>}
+    {['work-with-me','content-creation'].includes(path) && <div class="page-body"><div class="work-grid"><article><p class="eyebrow">01 / Photography</p><h2>A sense of place.</h2><p>Start a conversation about travel, lifestyle, and documentary photography for your destination or project.</p></article><article><p class="eyebrow">02 / Storytelling</p><h2>The human connection.</h2><p>Explore an editorial story that looks beyond the itinerary to the people and experiences at its heart.</p></article><article><p class="eyebrow">03 / Collaboration</p><h2>A shared perspective.</h2><p>Have an idea for a journey or a creative partnership? Let’s discuss the story you want to tell.</p></article></div><div class="contact-links"><a class="button" href={`mailto:${email}?subject=A%20creative%20collaboration`}>Tell me about your project ↗</a><a class="text-link" href="/portfolio/">Explore the photography ↗</a></div></div>}
+    {path === 'link-in-bio' && <div class="link-list">{[{href:'/journal/',label:'Read the journal'},{href:'/travel-guides/',label:'Plan a journey'},{href:'/portfolio/',label:'Explore the photography'},{href:'/about/',label:'Meet Jupiter'},{href:'/contact/',label:'Let’s connect'}].map(l => <a href={l.href}>{l.label}<span aria-hidden="true">↗</span></a>)}</div>}
+    {path === 'privacy-policy' ? <div class="contact-content prose"><h2>Analytics choices</h2><p>Jupiter Konnections uses Google Tag Manager to manage Google Analytics 4, which helps us understand page visits and how readers explore the website. Analytics loads after you accept it on jupiterkonnections.com or www.jupiterkonnections.com. Local development and preview domains are excluded.</p><p>You can accept or reject analytics when prompted and reopen Analytics settings in the footer to change your choice. Your choice is stored in your browser for up to six months. If you reject analytics after accepting it, we disable Analytics collection, clear accessible Google Analytics cookies and reload the page.</p><p>When enabled, Google Analytics can process information such as the pages viewed, visit times, referring websites and device or browser details. Google processes the data under its own service terms. Learn more about <a href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer">how Google uses data from websites using its services</a>.</p><p>Analytics and advertising consent are separate. This website's analytics choice grants analytics storage only. Advertising storage, advertising user data and advertising personalization remain denied.</p><div class="archive-note"><p>This analytics section describes the site configuration. The full privacy notice is still being completed before launch.</p></div><p>For privacy questions, contact <a href={`mailto:${email}`}>{email}</a>.</p></div> : isPolicy && <div class="contact-content"><div class="archive-note"><p>The original policy describes the previous website, including its shop. Updated policy text is awaiting review for this static site.</p></div><p>For questions, contact <a class="text-link" href={`mailto:${email}`}>{email}</a>.</p></div>}
+  </div>}
+</Base>

@@ -1,0 +1,18 @@
+---
+import { antarcticExpedition as trip } from '../data/antarctic-expedition';
+---
+<aside class="expedition-record" aria-label="Confirmed Antarctic expedition details">
+  <p class="eyebrow">The expedition · 2017</p>
+  <p class="expedition-title">{trip.name}</p>
+  <dl><div><dt>Ship</dt><dd>{trip.ship}</dd></div><div><dt>Package dates</dt><dd><time datetime={trip.startDate}>20 January</time>–<time datetime={trip.endDate}>2 February 2017</time></dd></div><div><dt>Booked through</dt><dd>{trip.bookingCompany}</dd></div><div><dt>Expedition partner</dt><dd>{trip.expeditionPartner}</dd></div></dl>
+  <p class="expedition-note">These are the dates of my booked travel package. My journey account describes a ten-day voyage; the package dates also cover the Buenos Aires departure arrangement.</p>
+</aside>
+<style>
+.expedition-record{border-block:1px solid var(--line);padding-block:24px;margin-block:32px 44px}
+.expedition-title{font-family:var(--serif);font-size:25px;line-height:1.4;margin-bottom:24px}
+.expedition-record dl{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:0 0 24px}
+.expedition-record dt{font:10px var(--sans);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+.expedition-record dd{margin:0;font-size:16px;line-height:1.5}
+.expedition-note{font-size:13px;color:var(--muted);margin:0}
+@media(max-width:500px){.expedition-record dl{grid-template-columns:1fr}}
+</style>

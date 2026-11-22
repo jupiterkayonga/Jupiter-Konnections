@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import StoryCard from './StoryCard.astro';
+import { destinations } from '../data/catalog';
+const { entries, filters = true } = Astro.props as { entries: CollectionEntry<'entries'>[]; filters?: boolean };
+const sorted = [...entries].sort((a,b) => Number(b.data.ready) - Number(a.data.ready) || Number(['pending', 'draft'].includes(a.data.status)) - Number(['pending', 'draft'].includes(b.data.status)) || Number(b.data.featured) - Number(a.data.featured) || (b.data.date || '').localeCompare(a.data.date || ''));
+---
+<section data-listing>
+  {filters && <div class="filters"><div class="filter-buttons" role="group" aria-label="Filter by destination"><button type="button" data-filter="all" aria-pressed="true">All places</button>{[...destinations.map(d => ({ slug: d.slug, name: d.name })), { slug: 'elsewhere', name: 'Across the world' }].sort((a, b) => a.name.localeCompare(b.name, 'en')).filter(d => entries.some(e => e.data.destination === d.slug)).map(d => <button type="button" data-filter={d.slug} aria-pressed="false">{d.name}</button>)}</div><label class="search-label">Find a story<input type="search" data-search placeholder="Search titles, places, stories…" autocomplete="off" /></label></div>}
+  <p class="filter-status" role="status" aria-live="polite" data-count>{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</p>
+  <div class="card-grid listing-grid">{sorted.map(entry => <div data-entry data-destination={entry.data.destination} data-search-text={`${entry.data.title} ${entry.data.destination} ${entry.data.description}`.toLowerCase()}><StoryCard entry={entry} /></div>)}</div>
+  <p class="no-results" data-empty hidden>No stories match that search. Try another place or title.</p>
+</section>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-listing]').forEach(listing => {
+    let selected = 'all';
+    const search = listing.querySelector<HTMLInputElement>('[data-search]');
+    const buttons = listing.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const cards = listing.querySelectorAll<HTMLElement>('[data-entry]');
+    function update() {
+      const query = search?.value.trim().toLowerCase() || '';
+      let count = 0;
+      cards.forEach(card => {
+        const visible = (selected === 'all' || card.dataset.destination === selected) && (card.dataset.searchText || '').includes(query);
+        card.hidden = !visible; if (visible) count++;
+      });
+      const status = listing.querySelector('[data-count]');
+      if (status) status.textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
+      const empty = listing.querySelector<HTMLElement>('[data-empty]');
+      if (empty) empty.hidden = count !== 0;
+    }
+    buttons.forEach(button => button.addEventListener('click', () => {
+      selected = button.dataset.filter || 'all';
+      buttons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      update();
+    }));
+    search?.addEventListener('input', update);
+  });
+</script>

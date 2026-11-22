@@ -1,0 +1,35 @@
+---
+const { excluded = false } = Astro.props as { excluded?: boolean };
+---
+<section
+  class="analytics-consent"
+  data-analytics-consent
+  data-container-id="GTM-NRPC5X8"
+  data-measurement-id="G-V3VLWZG18X"
+  data-excluded={String(excluded)}
+  aria-labelledby="analytics-consent-heading"
+  hidden
+>
+  <h2 id="analytics-consent-heading" tabindex="-1">Your analytics choice</h2>
+  <p>May we use Google Analytics to understand which stories people read and how they explore the site? You can change your choice at any time.</p>
+  <a href="/privacy-policy/">Read about analytics and privacy</a>
+  <div class="analytics-consent-actions">
+    <button type="button" data-analytics-choice="denied">Reject analytics</button>
+    <button type="button" data-analytics-choice="granted">Accept analytics</button>
+  </div>
+</section>
+<script>
+  import { initializeAnalyticsConsent } from '../scripts/analytics-consent';
+  initializeAnalyticsConsent();
+</script>
+<style>
+.analytics-consent{position:fixed;inset:auto 20px 20px auto;width:min(460px,calc(100vw - 40px));z-index:1000;padding:26px;background:var(--paper);border:1px solid var(--line);box-shadow:0 8px 40px #272a2326}
+.analytics-consent[hidden]{display:none}
+.analytics-consent h2{font:26px var(--serif);margin:0 0 12px}
+.analytics-consent p{font-size:14px;line-height:1.65;margin-bottom:12px}
+.analytics-consent>a{font-size:12px;text-decoration:underline;text-underline-offset:4px}
+.analytics-consent-actions{display:flex;gap:12px;margin-top:22px}
+.analytics-consent-actions button{flex:1;padding:12px 10px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);font-size:12px;cursor:pointer}
+.analytics-consent-actions button:hover{background:var(--ink);color:var(--paper)}
+@media(max-width:400px){.analytics-consent-actions{flex-direction:column}}
+</style>
