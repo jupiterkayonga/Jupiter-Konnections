@@ -1,10 +1,10 @@
 # Jupiter Konnections
 
-An Astro **7.3.8** static revamp, prepared for **Cloudflare Pages** in this folder. No Cloudflare adapter, server runtime, checkout, or remote image dependency is required.
+An Astro **7.4.13** static revamp, prepared for **Cloudflare Pages** in this folder. No Cloudflare adapter, server runtime, checkout, or remote image dependency is required.
 
 ## Run locally
 
-Use Node **22.12+** (the project pins Node 24.11.0).
+Use Node **22.23.4+** (the project pins Node 24.22.1).
 
 ```sh
 npm ci
@@ -24,7 +24,7 @@ If your environment blocks Astro's preference-directory writes, prefix Astro com
 
 ## Cloudflare Workers static hosting
 
-For a Cloudflare **Workers** Git build, use build command `npm run build:cloudflare`, deploy command `npx wrangler deploy`, and Node version `24.11.0`. The Worker project name should match `jupiter-konnections` in `wrangler.jsonc`.
+For a Cloudflare **Workers** Git build, use build command `npm run build:cloudflare`, deploy command `npx wrangler deploy`, and Node version `24.22.1`. The Worker project name should match `jupiter-konnections` in `wrangler.jsonc`.
 
 The explicit Wrangler configuration deploys `dist` as static assets, including the headers, redirects, and 404 page. No Astro Cloudflare adapter is needed. Without this configuration, Wrangler auto-detects Astro and attempts to install an adapter for server rendering, which can cause an Astro peer-dependency conflict. Do not run `astro add cloudflare` or bypass that conflict with `--force`.
 
@@ -41,7 +41,7 @@ In Cloudflare Workers & Pages, create a **Pages** project, import `jupiterkayong
 | Build output directory | `dist` |
 | Root directory | Repository root |
 | Production branch | `main` |
-| Environment variable | `NODE_VERSION=24.11.0` |
+| Environment variable | `NODE_VERSION=24.22.1` |
 
 `build:cloudflare` creates the static output and validates routes, internal links, image metadata, article connections, galleries, analytics consent, and the Pages limits of 20,000 files and 25 MiB per asset.
 
