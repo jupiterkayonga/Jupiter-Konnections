@@ -13,7 +13,12 @@ for (const destination of destinations) {
   assert(html.includes(`<link rel="canonical" href="https://jupiterkonnections.com${route}"`));
   assert(sitemap.includes(`<loc>https://jupiterkonnections.com${route}</loc>`));
   assert(!html.includes('0 entries'), `Empty listing on destination: ${route}`);
-  if (countryJourneys[destination.slug]) assert(html.includes('id="country-journey-heading"'), `Missing journey overview: ${route}`);
+  if (html.includes('id="destination-chapter-heading"')) {
+    assert(html.includes('The journey happened.') && html.includes('unfolding.'), `Missing chapter invitation: ${route}`);
+    assert(html.includes(destination.coordinates), `Missing coordinates: ${route}`);
+    assert(html.includes('href="/journal/"') && html.includes('href="/portfolio/"'), `Missing onward links: ${route}`);
+    assert(!html.includes('id="country-journey-heading"'), `Mixed placeholder and journey layout: ${route}`);
+  } else if (countryJourneys[destination.slug]) assert(html.includes('id="country-journey-heading"'), `Missing journey overview: ${route}`);
 }
 for (const slug of Object.keys(countryJourneys)) assert(slugs.includes(slug), `Journey without destination: ${slug}`);
 assert(directory.includes('Journey overview') && directory.includes('Stories &amp; photography'));

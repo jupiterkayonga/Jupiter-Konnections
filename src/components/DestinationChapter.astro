@@ -1,0 +1,11 @@
+---
+import ArrowIcon from './ArrowIcon.astro';
+const { name, coordinates } = Astro.props as { name: string; coordinates: string };
+---
+<section class="destination-chapter" aria-labelledby="destination-chapter-heading">
+  <div class="chapter-compass" aria-hidden="true"><svg viewBox="0 0 160 160" fill="none" stroke="currentColor"><circle cx="80" cy="80" r="68"/><circle cx="80" cy="80" r="51"/><path d="M80 4v22m0 108v22M4 80h22m108 0h22M80 45l10 35-10 35-10-35Z"/></svg></div>
+  <p class="eyebrow">Field notes / {name} / {coordinates}</p>
+  <h2 id="destination-chapter-heading">The journey happened.<br />The stories are still <em>unfolding.</em></h2>
+  <p class="chapter-message">I’ve returned with photographs, memories, and stories to share. This chapter is taking shape—come back soon to explore it with me.</p>
+  <nav class="chapter-links" aria-label="Continue exploring"><a class="text-link" href="/journal/">Explore the journal <ArrowIcon /></a><a class="text-link" href="/portfolio/">Discover the photo essays <ArrowIcon /></a></nav>
+</section>
