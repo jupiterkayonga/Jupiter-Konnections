@@ -22,7 +22,15 @@ npm run preview
 
 If your environment blocks Astro's preference-directory writes, prefix Astro commands with `ASTRO_TELEMETRY_DISABLED=1`.
 
-## Cloudflare Pages
+## Cloudflare Workers static hosting
+
+For a Cloudflare **Workers** Git build, use build command `npm run build:cloudflare`, deploy command `npx wrangler deploy`, and Node version `24.11.0`. The Worker project name should match `jupiter-konnections` in `wrangler.jsonc`.
+
+The explicit Wrangler configuration deploys `dist` as static assets, including the headers, redirects, and 404 page. No Astro Cloudflare adapter is needed. Without this configuration, Wrangler auto-detects Astro and attempts to install an adapter for server rendering, which can cause an Astro peer-dependency conflict. Do not run `astro add cloudflare` or bypass that conflict with `--force`.
+
+To validate the deployment package without publishing, run `npm run build:cloudflare` followed by `npx wrangler deploy --dry-run`. Cloudflare account credentials belong in Cloudflare or your local environment, never in the repository.
+
+## Cloudflare Pages (alternative)
 
 In Cloudflare Workers & Pages, create a **Pages** project, import `jupiterkayonga/Jupiter-Konnections` from GitHub, and use:
 
