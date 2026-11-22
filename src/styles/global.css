@@ -269,3 +269,10 @@ html.photo-viewer-open{overflow:hidden;scrollbar-gutter:stable}
 .chapter-message{max-width:520px;margin:0 auto 32px;color:var(--muted);font-size:15px;line-height:1.8}
 .chapter-links{display:flex;justify-content:center;flex-wrap:wrap;gap:24px 36px}
 @media(max-width:760px){.destination-chapter{padding:12px 0 36px}.chapter-compass{width:88px;margin-bottom:24px}.chapter-message{font-size:14px}.chapter-links{flex-direction:column;align-items:center;gap:22px}.destination-chapter .eyebrow{font-size:9px;letter-spacing:.08em}}
+
+/* Original Cuba series: balanced rows, with room for the quiet portrait. */
+.sports-collection .prose p.article-photo-feature:has(img[src*="boxing-rest"]){width:min(100%,560px);margin-inline:auto}
+.sports-collection .prose p.article-photo-feature:has(img[src*="boxing-sparring"]){width:100%;margin-block:44px}
+@media(min-width:761px){
+ .sports-collection .prose p.article-photo-pair:has(img[src*="boxing-portrait-"]){aspect-ratio:3/2}
+}

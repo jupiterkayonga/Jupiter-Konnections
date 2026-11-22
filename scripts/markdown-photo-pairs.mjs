@@ -18,7 +18,7 @@ export default {
       const recovered = !feature && content.every(image => String(imageProperties(image).src || '').match(/iceland-recovered-|cuba-journey-|cuban-passion-|habana-running-|kilimanjaro-|zanzibar-|antarctica-expedition-|india-festivals-|almendrones-|faces-india-|experiencing-holi-/)); 
       const skutafoss = content.length === 4 && content.every(image => /iceland-recovered-(05|01|12|11)/.test(String(imageProperties(image).src || '')));
       const tallPair = content.length === 2 && content.every(image => /kilimanjaro-fullmoon-(moorland|senecios)|cuba-journey-portrait-/.test(String(imageProperties(image).src || '')));
-      const portraitGallery = content.length > 1 && content.every(image => /faces-india-portrait-|almendrones-detail-|cuba-journey-portrait-|cuban-passion-boxing/.test(String(imageProperties(image).src || '')));
+      const portraitGallery = content.length > 1 && content.every(image => /faces-india-portrait-|almendrones-detail-|cuba-journey-portrait-|cuban-passion-boxing(?:-portrait-|(?:-red-gloves)?\.jpg)/.test(String(imageProperties(image).src || '')));
       const photographyGroup = content.length > 1 && content.every(image => /faces-india-|experiencing-holi-|almendrones-|cuban-passion-/.test(String(imageProperties(image).src || '')));
       const twoByTwo = content.length === 4;
       const wondersGallery = content.length === 3 && content.every(image => /Machu Picchu|Taj Mahal/.test(String(imageProperties(image).alt || '')));
