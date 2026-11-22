@@ -24,15 +24,18 @@ If your environment blocks Astro's preference-directory writes, prefix Astro com
 
 ## Cloudflare Pages
 
-Connect this folder's Git repository to a Pages project and use:
+In Cloudflare Workers & Pages, create a **Pages** project, import `jupiterkayonga/Jupiter-Konnections` from GitHub, and use:
 
 | Setting | Value |
 | --- | --- |
 | Framework preset | Astro |
-| Build command | `npm run build` |
+| Build command | `npm run build:cloudflare` |
 | Build output directory | `dist` |
 | Root directory | Repository root |
+| Production branch | `main` |
 | Environment variable | `NODE_VERSION=24.11.0` |
+
+`build:cloudflare` creates the static output and validates routes, internal links, image metadata, article connections, galleries, analytics consent, and the Pages limits of 20,000 files and 25 MiB per asset.
 
 The existing `public/_headers`, `public/_redirects`, and generated `404.html` are copied into `dist`. A top-level 404 prevents Pages from treating this as a single-page application. Attach `jupiterkonnections.com` as a custom domain when ready. For a preview on another domain, canonical links intentionally continue to point to the production domain.
 

@@ -14,7 +14,9 @@
     "verify": "node scripts/verify-build.mjs",
     "verify:viewer": "node scripts/verify-photo-viewer.mjs",
     "verify:articles": "node scripts/verify-article-connections.mjs",
-    "verify:destinations": "node scripts/verify-destinations.mjs"
+    "verify:destinations": "node scripts/verify-destinations.mjs",
+    "verify:analytics": "node scripts/verify-analytics.mjs",
+    "build:cloudflare": "astro build && npm run verify && npm run verify:articles && npm run verify:destinations && npm run verify:viewer && npm run verify:analytics"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.4.3",

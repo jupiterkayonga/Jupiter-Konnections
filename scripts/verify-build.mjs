@@ -8,6 +8,13 @@ async function walk(dir) {
 }
 const files = await walk(root);
 const pages = files.filter(f => f.endsWith('.html'));
+// Cloudflare Pages Free plan limits also apply to generated image variants.
+assert(files.length <= 20_000, `Cloudflare Pages supports up to 20,000 files; found ${files.length}`);
+for (const file of files) {
+  const size = (await stat(file)).size;
+  assert(size <= 25 * 1024 * 1024, `Cloudflare Pages asset exceeds 25 MiB: ${path.relative(root, file)}`);
+}
+
 const errors = [];
 const routeFor = file => '/' + path.relative(root,file).split(path.sep).join('/').replace(/index\.html$/, '');
 const exists = async file => { try { return (await stat(file)).isFile(); } catch { return false; } };
