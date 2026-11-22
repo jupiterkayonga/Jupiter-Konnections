@@ -1,4 +1,5 @@
 ---
+import ArrowIcon from './ArrowIcon.astro';
 import type { CollectionEntry } from 'astro:content';
 import Media from './Media.astro';
 const { entry, number } = Astro.props as { entry: CollectionEntry<'entries'>; number?: string };
@@ -9,7 +10,7 @@ const d = entry.data;
     <Media title={d.destination === 'elsewhere' ? 'Field notes' : d.destination} destination={d.destination} image={d.image} alt={d.imageAlt} />
   </a>
   <div class="card-meta"><span>{d.kind === 'guide' ? 'Travel guide' : d.kind === 'project' ? 'Photo essay' : d.photoEssay ? 'Journal · Photo essay' : 'Journal'} · {d.destination}</span>{number && <span>{number}</span>}</div>
-  <h3><a href={`/${d.slug}/`}>{d.title}<span aria-hidden="true"> ↗</span></a></h3>
+  <h3 style={`--mobile-title-scale: ${Math.min(8, 530 / d.title.length)}vw`}><a href={`/${d.slug}/`}>{d.title}<span aria-hidden="true"> <ArrowIcon /></span></a></h3>
   <p>{d.description}</p>
   {d.status === 'draft' && <span class="pending-label">Working draft · in progress</span>}
   {d.status === 'pending' && <span class="pending-label">From the archive · text to follow</span>}

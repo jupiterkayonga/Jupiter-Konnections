@@ -26,11 +26,11 @@ const active = Astro.url.pathname;
   <header class="site-header wrap">
     <Logo />
     <nav class="desktop-nav" aria-label="Main navigation">{nav.map(n => <a href={n.href} aria-current={active.startsWith(n.href) ? 'page' : undefined}>{n.label}</a>)}</nav>
-    <div class="header-actions"><SocialLinks compact primaryOnly label="Follow Jupiter" /><a class="header-contact" href="/work-with-me/">Let’s connect <span aria-hidden="true">↗</span></a></div>
+    <div class="header-actions"><SocialLinks compact primaryOnly label="Follow Jupiter" /><a class="header-contact" href="/work-with-me/">Let’s connect <span aria-hidden="true">↗︎</span></a></div>
     <details class="mobile-menu"><summary>Menu <span aria-hidden="true">+</span></summary><nav aria-label="Mobile navigation">{nav.map(n => <a href={n.href}>{n.label}</a>)}<a href="/work-with-me/">Let’s connect</a><SocialLinks compact label="Follow Jupiter on social media" /></nav></details>
   </header>
   <main id="main"><slot /></main>
-  <section class="connect-strip wrap"><p class="eyebrow">Good stories start with a connection</p><a href="/contact/">Let’s make one.<span aria-hidden="true">↗</span></a></section>
+  <section class="connect-strip wrap"><p class="eyebrow">Good stories start with a connection</p><a href="/contact/">Let’s make one.<span aria-hidden="true">↗︎</span></a></section>
   <footer class="site-footer wrap">
     <div><Logo footer /><p>A storyteller and explorer at heart.<br />Based in Paris. Connected to the world.</p></div>
     <div><p class="eyebrow">Explore</p><a href="/travel-guides/">Travel guides</a><a href="/journal/">Journal</a><a href="/portfolio/">Photography</a></div>

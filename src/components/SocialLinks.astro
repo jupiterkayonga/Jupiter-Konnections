@@ -1,4 +1,5 @@
 ---
+import ArrowIcon from './ArrowIcon.astro';
 import { socials } from '../data/catalog';
 interface Props { compact?: boolean; primaryOnly?: boolean; label?: string; }
 const { compact = false, primaryOnly = false, label = 'Social profiles' } = Astro.props;
@@ -19,7 +20,7 @@ const paths: Record<string,string> = {
     const description = ready ? `${s.name} — opens in a new tab` : `${s.name} — profile link pending`;
     return <Tag href={ready ? s.url : undefined} class:list={['social-button', { 'social-pending': !ready }]} target={ready ? '_blank' : undefined} rel={ready ? 'noopener noreferrer' : undefined} role={ready ? undefined : 'link'} aria-disabled={ready ? undefined : 'true'} aria-label={description} title={description}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={paths[s.id]} /></svg>
-      <span class:list={{ 'sr-only': compact }}>{s.name}</span>{!compact && <span class="social-arrow" aria-hidden="true">{ready ? '↗' : '·'}</span>}
+      <span class:list={{ 'sr-only': compact }}>{s.name}</span>{!compact && <span class="social-arrow" aria-hidden="true">{ready ? <ArrowIcon /> : '·'}</span>}
     </Tag>;
   })}
 </nav>

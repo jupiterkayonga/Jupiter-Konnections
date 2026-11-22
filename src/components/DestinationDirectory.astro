@@ -1,4 +1,5 @@
 ---
+import ArrowIcon from './ArrowIcon.astro';
 import { getCollection } from 'astro:content';
 import { destinations } from '../data/catalog';
 const entries = await getCollection('entries');
@@ -15,4 +16,4 @@ const alphabetical = [...destinations].sort((a, b) => a.name.localeCompare(b.nam
 const ordered = groups.flatMap(group => alphabetical.filter(destination => group.regions.includes(destination.region)));
 ---
 <nav class="collection-switch" aria-label="Browse destinations by region">{groups.map(group => <a href={`#${group.id}`}>{group.title}</a>)}</nav>
-{groups.map(group => <section class="destination-region" aria-labelledby={`${group.id}-heading`} id={group.id}><div class="section-heading"><h2 id={`${group.id}-heading`}>{group.title}</h2></div><div class="destination-grid">{alphabetical.filter(destination => group.regions.includes(destination.region)).map(destination => <a class:list={['destination-tile', destination.tone]} href={`/destinations/${destination.slug}/`}><div class="tile-top"><span>{destination.region}</span><span>{String(ordered.indexOf(destination) + 1).padStart(2, '0')}</span></div><span class="destination-name">{destination.name}</span><span class="destination-stage">{hasStories(destination.slug) ? 'Stories & photography' : 'Journey overview'}</span><div class="tile-bottom"><span>{destination.coordinates}</span><span class="tile-arrow" aria-hidden="true">↗</span></div></a>)}</div></section>)}
+{groups.map(group => <section class="destination-region" aria-labelledby={`${group.id}-heading`} id={group.id}><div class="section-heading"><h2 id={`${group.id}-heading`}>{group.title}</h2></div><div class="destination-grid">{alphabetical.filter(destination => group.regions.includes(destination.region)).map(destination => <a class:list={['destination-tile', destination.tone]} href={`/destinations/${destination.slug}/`}><div class="tile-top"><span>{destination.region}</span><span>{String(ordered.indexOf(destination) + 1).padStart(2, '0')}</span></div><span class="destination-name">{destination.name}</span><span class="destination-stage">{hasStories(destination.slug) ? 'Stories & photography' : 'Journey overview'}</span><div class="tile-bottom"><span>{destination.coordinates}</span><span class="tile-arrow" aria-hidden="true"><ArrowIcon /></span></div></a>)}</div></section>)}

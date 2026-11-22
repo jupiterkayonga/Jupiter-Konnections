@@ -8,9 +8,9 @@ const collection = order.map(slug => entries.find(e => e.data.slug === slug)).fi
   {hub ? <><h2>One journey. Four perspectives.</h2><p>Explore my 2015 journey through Cuba, the friendship behind a Havana story, and two collections of photographs.</p></> : <p class="eyebrow">The Cuba collection</p>}
   <ul>{collection.map(e => <li>
     <span class="cuba-format">{e.data.kind === 'project' ? 'Photo essay' : 'Journal'}{e.data.status === 'draft' && ' · Working draft'}</span>
-    {e.data.slug === current ? <span class="cuba-current" aria-current="page">{e.data.title}</span> : <a href={`/${e.data.slug}/`}>{e.data.title} <span aria-hidden="true">↗</span></a>}
+    {e.data.slug === current ? <span class="cuba-current" aria-current="page">{e.data.title}</span> : <a href={`/${e.data.slug}/`}>{e.data.title} <span aria-hidden="true">↗︎</span></a>}
   </li>)}</ul>
-  {!hub && <a class="cuba-all" href="/destinations/cuba/">Explore all of Cuba ↗</a>}
+  {!hub && <a class="cuba-all" href="/destinations/cuba/">Explore all of Cuba ↗︎</a>}
 </nav>
 <style>
 .cuba-connections{margin-block:48px;padding-block:28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
